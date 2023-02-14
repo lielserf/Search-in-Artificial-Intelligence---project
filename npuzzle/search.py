@@ -100,24 +100,36 @@ def h_lifo(queue, num_sec_tie):
 
 
 def depth_last(queue, num_sec_tie):
-    best_depth = max([val[6] for val in queue])
-    nodes_with_best_depth = [val for val in queue if val[6] == best_depth]
-    if len(nodes_with_best_depth) > 1:
+    best_h = min(queue, key=lambda tup: tup[7])[7]
+    nodes_with_best_h = [val for val in queue if val[7] == best_h]
+    if len(nodes_with_best_h) > 1:
         num_sec_tie += 1
-        node = random.choice(nodes_with_best_depth)
+        best_depth = max([val[6] for val in queue])
+        nodes_with_best_depth = [val for val in queue if val[6] == best_depth]
+        if len(nodes_with_best_depth) > 1:
+            num_sec_tie += 1
+            node = random.choice(nodes_with_best_depth)
+        else:
+            node = nodes_with_best_depth[0]
     else:
-        node = nodes_with_best_depth[0]
+        node = nodes_with_best_h[0]
     return node, num_sec_tie
 
 
 def depth_first(queue, num_sec_tie):
-    best_depth = min([val[6] for val in queue])
-    nodes_with_best_depth = [val for val in queue if val[6] == best_depth]
-    if len(nodes_with_best_depth) > 1:
+    best_h = min(queue, key=lambda tup: tup[7])[7]
+    nodes_with_best_h = [val for val in queue if val[7] == best_h]
+    if len(nodes_with_best_h) > 1:
         num_sec_tie += 1
-        node = random.choice(nodes_with_best_depth)
+        best_depth = min([val[6] for val in queue])
+        nodes_with_best_depth = [val for val in queue if val[6] == best_depth]
+        if len(nodes_with_best_depth) > 1:
+            num_sec_tie += 1
+            node = random.choice(nodes_with_best_depth)
+        else:
+            node = nodes_with_best_depth[0]
     else:
-        node = nodes_with_best_depth[0]
+        node = nodes_with_best_h[0]
     return node, num_sec_tie
 
 
@@ -142,9 +154,9 @@ def heappop_adj(queue, priority, num_tie, sec_tie):
             node = random_select(nodes_with_best_f)
         elif priority == "H-RAND":
             node, sec_tie = h_random(nodes_with_best_f, sec_tie)
-        elif priority == "DEPTH-L":
+        elif priority == "H-DEPTH-L":
             node, sec_tie = depth_last(nodes_with_best_f, sec_tie)
-        elif priority == "DEPTH-F":
+        elif priority == "H-DEPTH-F":
             node, sec_tie = depth_first(nodes_with_best_f, sec_tie)
 
     else:

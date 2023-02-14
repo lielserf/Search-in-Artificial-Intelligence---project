@@ -14,11 +14,11 @@ def write_to_csv(size, p, heurist, num_evaluated, time_per_node, num_of_ties, nu
     dic = {"size": [size], "priority": [p], "heuristic_func": [heurist], "#expirement": [num_ex], "num_evaluated": [num_evaluated], "time_per_node": [time_per_node],
            "num_of_ties": [num_of_ties], "num_steps": [num_steps], "overall_time": [overall_time], "number_second_tie": [sec_ties], "nodes in memory": [space_]}
     df = pd.DataFrame.from_dict(dic)
-    df.to_csv('./result.csv', header=False, mode='a')
+    df.to_csv(os.getcwd() + '/result.csv', header=False, mode='a')
 
 
 def main(zero_location, heuristic_function, priority, num_exp):
-    directory = 'puzzles'
+    directory = os.getcwd() + '/puzzles'
     for filename in os.listdir(directory):
         f = os.path.join(directory, filename)
         if os.path.isfile(f):
@@ -51,9 +51,10 @@ def main(zero_location, heuristic_function, priority, num_exp):
         print("-" * 40)
         write_to_csv(size, priority, heuristic_function, num_evaluated, time_per_node, num_of_ties, len(steps), t_delta, num_second_tie, complexity["space"], num_exp)
 
-zero_location_lst = ["zero_first", "zero_last"]
+zero_location_lst = ["zero_first", "zero_last", "snail"]
 heuristic_function_lst = ["linear_conflicts", "manhattan"]
-priority_lst = ["LIFO", "FIFO", "H-LIFO", "H-FIFO", "H-G", "G-H", "RANDOM", "H-RAND", "DEPTH-L", "DEPTH-F"]
+# priority_lst = ["LIFO", "FIFO", "H-LIFO", "H-FIFO", "H-G", "G-H", "RANDOM", "H-RAND", "DEPTH-L", "DEPTH-F"]
+priority_lst = ["H-DEPTH-L", "H-DEPTH-F"]
 
 for k in range(len(heuristic_function_lst)):
     for j in range(len(priority_lst)):

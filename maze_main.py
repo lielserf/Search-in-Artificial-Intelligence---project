@@ -1,14 +1,11 @@
 import time
 import random
 import numpy as np
-#import matplotlib.pyplot as plt
-#import matplotlib.cm as cm
 from collections import defaultdict
 import pandas as pd
-import numpy as np
-#import matplotlib.pyplot as plt
 from time import perf_counter
 import math
+import os
 
 
 class PrimsMaze:
@@ -178,24 +175,36 @@ def h_lifo(queue, num_sec_tie):
 
 
 def depth_last(queue, num_sec_tie):
-    best_depth = max([val[5] for val in queue])
-    nodes_with_best_depth = [val for val in queue if val[5] == best_depth]
-    if len(nodes_with_best_depth) > 1:
+    best_h = min(queue, key=lambda tup: tup[7])[7]
+    nodes_with_best_h = [val for val in queue if val[7] == best_h]
+    if len(nodes_with_best_h) > 1:
         num_sec_tie += 1
-        node = random.choice(nodes_with_best_depth)
+        best_depth = max([val[6] for val in queue])
+        nodes_with_best_depth = [val for val in queue if val[6] == best_depth]
+        if len(nodes_with_best_depth) > 1:
+            num_sec_tie += 1
+            node = random.choice(nodes_with_best_depth)
+        else:
+            node = nodes_with_best_depth[0]
     else:
-        node = nodes_with_best_depth[0]
+        node = nodes_with_best_h[0]
     return node, num_sec_tie
 
 
 def depth_first(queue, num_sec_tie):
-    best_depth = min([val[5] for val in queue])
-    nodes_with_best_depth = [val for val in queue if val[5] == best_depth]
-    if len(nodes_with_best_depth) > 1:
+    best_h = min(queue, key=lambda tup: tup[7])[7]
+    nodes_with_best_h = [val for val in queue if val[7] == best_h]
+    if len(nodes_with_best_h) > 1:
         num_sec_tie += 1
-        node = random.choice(nodes_with_best_depth)
+        best_depth = min([val[6] for val in queue])
+        nodes_with_best_depth = [val for val in queue if val[6] == best_depth]
+        if len(nodes_with_best_depth) > 1:
+            num_sec_tie += 1
+            node = random.choice(nodes_with_best_depth)
+        else:
+            node = nodes_with_best_depth[0]
     else:
-        node = nodes_with_best_depth[0]
+        node = nodes_with_best_h[0]
     return node, num_sec_tie
 
 
@@ -228,9 +237,9 @@ def heappop_adj(open_set, fscore, gscore, priority, num_tie, times, sec_tie, dep
             node = random_select(nodes_with_best_f)
         elif priority == "H-RAND":
             node, sec_tie = h_random(nodes_with_best_f, sec_tie)
-        elif priority == "DEPTH-L":
+        elif priority == "H-DEPTH-L":
             node, sec_tie = depth_last(nodes_with_best_f, sec_tie)
-        elif priority == "DEPTH-F":
+        elif priority == "H-DEPTH-F":
             node, sec_tie = depth_first(nodes_with_best_f, sec_tie)
 
     else:
@@ -244,7 +253,6 @@ def manhattan(cell, goal):
     x2, y2 = goal
     dist = abs(x1 - x2) + abs(y1 - y2)
     return dist
-
 
 def A_star(graph, start, goal, priority):
 
@@ -307,7 +315,6 @@ def A_star(graph, start, goal, priority):
     return False
 
 
-
 def mat2graph(mat):
     rows = len(mat)
     cols = len(mat[0])
@@ -325,7 +332,7 @@ def write_to_csv(size, p, num_evaluated, time_per_node, num_of_ties, num_steps, 
     dic = {"size": [size], "priority": [p], "expirement_number": [inx], "num_evaluated": [num_evaluated], "time_per_node": [time_per_node],
            "num_of_ties": [num_of_ties], "num_steps": [num_steps], "overall_time": [overall_time], "number_second_tie": [sec_ties], "nodes in memory": space_}
     df = pd.DataFrame.from_dict(dic)
-    df.to_csv('./result_maze.csv', header=False, mode='a')
+    df.to_csv(os.getcwd() + '/result_maze2.csv', header=False, mode='a')
 
 
 def main(size, priority, exp_num):
@@ -360,8 +367,9 @@ def main(size, priority, exp_num):
     # plt.imshow(mat)
     # plt.show()
 
-priority_lst = ["LIFO", "FIFO", "H-LIFO", "H-FIFO", "H-G", "G-H", "RANDOM", "H-RAND", "DEPTH-L", "DEPTH-F"]
-maze_sizes = [25]
+#priority_lst = ["LIFO", "FIFO", "H-LIFO", "H-FIFO", "H-G", "G-H", "RANDOM", "H-RAND", "DEPTH-L", "DEPTH-F"]
+priority_lst = ["H-DEPTH-L", "H-DEPTH-F"]
+maze_sizes = [25, 125, 225, 325]
 for si in range(len(maze_sizes)):
     print("-"*25, maze_sizes[si], "-"*25)
     for pi in range(len(priority_lst)):
