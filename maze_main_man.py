@@ -276,7 +276,7 @@ def A_star(graph, start, goal, priority):
     for key in graph:
         fscore[key] = math.inf
 
-    fscore[start] = heauristic(start, goal)  # cost for start is only h(x)
+    fscore[start] = manhattan(start, goal)  # cost for start is only h(x)
     last_f, last_h, last_depth, count_tie, second_tie, counter_space, num_thr_tie = 0, 0, 0, 0, 0, 0, 0
     while open_set:
         open_set, min_node, count_tie, second_tie, num_thr_tie = heappop_adj(open_set, fscore, gscore, priority, count_tie, time_nodes, second_tie, depth_dict, num_thr_tie)
@@ -301,7 +301,7 @@ def A_star(graph, start, goal, priority):
                 continue
             came_from[neighbor] = current  # record the best path untill now
             gscore[neighbor] = tentative_gscore
-            curr_h_score = heauristic(neighbor, goal)
+            curr_h_score = manhattan(neighbor, goal)
             curr_f_score = gscore[neighbor] + curr_h_score
             fscore[neighbor] = curr_f_score
             if last_f == curr_f_score and curr_h_score == last_h:
@@ -332,7 +332,7 @@ def write_to_csv(size, p, num_evaluated, time_per_node, num_of_ties, num_steps, 
     dic = {"size": [size], "priority": [p], "expirement_number": [inx], "num_evaluated": [num_evaluated], "time_per_node": [time_per_node],
            "num_of_ties": [num_of_ties], "num_steps": [num_steps], "overall_time": [overall_time], "number_second_tie": [sec_ties], "number_third_tie": [num_thr_tie],  "nodes in memory": space_}
     df = pd.DataFrame.from_dict(dic)
-    df.to_csv(os.getcwd() + '/result_maze.csv', header=False, mode='a')
+    df.to_csv(os.getcwd() + '/result_maze_man.csv', header=False, mode='a')
 
 
 def main(size, priority, exp_num):

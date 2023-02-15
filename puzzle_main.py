@@ -10,11 +10,11 @@ from npuzzle import heuristics
 from npuzzle import solved_states
 
 
-def write_to_csv(size, p, heurist, num_evaluated, time_per_node, num_of_ties, num_steps, overall_time, sec_ties, space_, num_ex):
+def write_to_csv(size, p, heurist, num_evaluated, time_per_node, num_of_ties, num_steps, overall_time, sec_ties, space_, num_ex, num_thr_tie):
     dic = {"size": [size], "priority": [p], "heuristic_func": [heurist], "#expirement": [num_ex], "num_evaluated": [num_evaluated], "time_per_node": [time_per_node],
-           "num_of_ties": [num_of_ties], "num_steps": [num_steps], "overall_time": [overall_time], "number_second_tie": [sec_ties], "nodes in memory": [space_]}
+           "num_of_ties": [num_of_ties], "num_steps": [num_steps], "overall_time": [overall_time], "number_second_tie": [sec_ties], "number_third_tie": [num_thr_tie], "nodes in memory": [space_]}
     df = pd.DataFrame.from_dict(dic)
-    df.to_csv(os.getcwd() + '/result.csv', header=False, mode='a')
+    df.to_csv(os.getcwd() + '/result_puzzle.csv', header=False, mode='a')
 
 
 def main(zero_location, heuristic_function, priority, num_exp):
@@ -40,6 +40,7 @@ def main(zero_location, heuristic_function, priority, num_exp):
         num_evaluated = complexity["time"]
         num_of_ties = complexity["count_of_tie"]
         num_second_tie = complexity["second_tie"]
+        num_thr_tie = complexity['third_tie']
         time_per_node = t_delta / max(num_evaluated, 1)
         print(f"evaluated nodes: {num_evaluated}")
         print(f"second(s) per node: {time_per_node:.8f}")
@@ -49,7 +50,7 @@ def main(zero_location, heuristic_function, priority, num_exp):
             print("solution not found")
         print("space complexity:", complexity["space"], "nodes in memory")
         print("-" * 40)
-        write_to_csv(size, priority, heuristic_function, num_evaluated, time_per_node, num_of_ties, len(steps), t_delta, num_second_tie, complexity["space"], num_exp)
+        write_to_csv(size, priority, heuristic_function, num_evaluated, time_per_node, num_of_ties, len(steps), t_delta, num_second_tie, complexity["space"], num_exp, num_thr_tie)
 
 zero_location_lst = ["zero_first", "zero_last", "snail"]
 heuristic_function_lst = ["linear_conflicts", "manhattan"]
