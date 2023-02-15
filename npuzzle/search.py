@@ -162,7 +162,7 @@ def heappop_adj(queue, priority, num_tie, sec_tie, num_thr_tie):
     else:
         node = nodes_with_best_f[0]
     queue.remove(node)
-    return queue, node, num_tie, sec_tie
+    return queue, node, num_tie, sec_tie, num_thr_tie
 
 
 def a_star_search(puzzle, solved, size, HEURISTIC, TRANSITION_COST, priority):
